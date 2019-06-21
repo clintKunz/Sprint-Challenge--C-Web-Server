@@ -91,12 +91,11 @@ int send_request(int fd, char *hostname, char *port, char *path)
   char request[max_request_size];
   int rv;
 
-  sprintf(request,
-                  "hostname: %s\n"
-                  "port: %s\n"
-                  "path: %s\n"
+  sprintf(request, "GET /%s HTTP/1.1\n"
+                  "Host: %s:%s\n"
+                  "Connection: close\n"
                   "\n",
-                  hostname, port, path);
+                  path, hostname, port);
 
   rv = send(fd, request, strlen(request), 0);
 
