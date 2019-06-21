@@ -45,9 +45,32 @@ urlinfo_t *parse_url(char *url)
     6. Overwrite the colon with a '\0' so that we are just left with the hostname.
   */
 
-  ///////////////////
-  // IMPLEMENT ME! //
-  ///////////////////
+  char *first_slash;
+  first_slash = strchr(url, '/');
+
+  first_slash++;
+  path = first_slash;
+  //printf("%s\n", first_slash); 
+
+  first_slash--;
+  *first_slash = '\0';
+
+  char *first_colon;
+  first_colon = strchr(url, ':');
+
+  first_colon++;
+  port = first_colon;
+  //printf("%s\n", port);
+
+  first_colon--; 
+  *first_colon = '\0';
+
+  hostname = url;
+  //printf("%s\n", hostname); 
+
+  urlinfo->hostname = hostname;
+  urlinfo->port = port;
+  urlinfo->path = path;
 
   return urlinfo;
 }
@@ -68,17 +91,26 @@ int send_request(int fd, char *hostname, char *port, char *path)
   char request[max_request_size];
   int rv;
 
-  ///////////////////
-  // IMPLEMENT ME! //
-  ///////////////////
+  sprintf(request, "GET /%s HTTP/1.1\n"
+                  "Host: %s:%s\n"
+                  "Connection: close\n"
+                  "\n",
+                  path, hostname, port);
 
-  return 0;
+  rv = send(fd, request, strlen(request), 0);
+
+  if (rv < 0) {
+    perror("send");
+  }
+
+  return rv;
 }
 
 int main(int argc, char *argv[])
 {  
   int sockfd, numbytes;  
   char buf[BUFSIZE];
+  struct urlinfo_t *urlinfo;
 
   if (argc != 2) {
     fprintf(stderr,"usage: client HOSTNAME:PORT/PATH\n");
@@ -93,9 +125,15 @@ int main(int argc, char *argv[])
     5. Clean up any allocated memory and open file descriptors.
   */
 
-  ///////////////////
-  // IMPLEMENT ME! //
-  ///////////////////
+  urlinfo = parse_url(argv[1]);
+  sockfd = get_socket(urlinfo->hostname, urlinfo->port);
+  send_request(sockfd, urlinfo->hostname, urlinfo->port, urlinfo->path);
+  
+  while ((numbytes = recv(sockfd, buf, BUFSIZE - 1, 0)) > 0) {
+    printf("%s", buf);
+  }
+
+  free(urlinfo); 
 
   return 0;
 }
