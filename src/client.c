@@ -51,7 +51,7 @@ urlinfo_t *parse_url(char *url)
   path = first_slash++;
   printf("%s\n", first_slash); 
 
-  url[*first_slash] = "\0";
+  url[*first_slash] = '\0';
 
   char *first_colon;
   first_colon = strchr(url, ':');
@@ -59,7 +59,7 @@ urlinfo_t *parse_url(char *url)
   port = first_colon++;
   printf("%s\n", port);
 
-  url[*first_colon] = "\0";
+  url[*first_colon] = '\0';
 
   hostname = url; 
 
@@ -106,6 +106,7 @@ int main(int argc, char *argv[])
 {  
   int sockfd, numbytes;  
   char buf[BUFSIZE];
+  struct urlinfo_t *urlinfo;
 
   if (argc != 2) {
     fprintf(stderr,"usage: client HOSTNAME:PORT/PATH\n");
@@ -120,8 +121,15 @@ int main(int argc, char *argv[])
     5. Clean up any allocated memory and open file descriptors.
   */
 
-  parse_url(argv[1]);
-  //get_socket();
+  urlinfo = parse_url(argv[1]);
+  sockfd = get_socket(urlinfo->hostname, urlinfo->port);
+  send_request(sockfd, urlinfo->hostname, urlinfo->port, urlinfo->path);
+  
+  while ((numbytes = recv(sockfd, buf, BUFSIZE - 1, 0)) > 0) {
+    printf("%d\n", numbytes);
+  }
+
+  free(urlinfo); 
 
   return 0;
 }
