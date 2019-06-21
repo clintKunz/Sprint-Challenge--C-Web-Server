@@ -48,20 +48,25 @@ urlinfo_t *parse_url(char *url)
   char *first_slash;
   first_slash = strchr(url, '/');
 
-  path = first_slash++;
+  first_slash++;
+  path = first_slash;
   printf("%s\n", first_slash); 
 
-  url[*first_slash] = '\0';
+  first_slash--;
+  *first_slash = '\0';
 
   char *first_colon;
   first_colon = strchr(url, ':');
 
-  port = first_colon++;
+  first_colon++;
+  port = first_colon;
   printf("%s\n", port);
 
-  url[*first_colon] = '\0';
+  first_colon--; 
+  *first_colon = '\0';
 
-  hostname = url; 
+  hostname = url;
+  printf("%s\n", hostname); 
 
   urlinfo->hostname = hostname;
   urlinfo->port = port;
