@@ -50,7 +50,7 @@ urlinfo_t *parse_url(char *url)
 
   first_slash++;
   path = first_slash;
-  printf("%s\n", first_slash); 
+  //printf("%s\n", first_slash); 
 
   first_slash--;
   *first_slash = '\0';
@@ -60,13 +60,13 @@ urlinfo_t *parse_url(char *url)
 
   first_colon++;
   port = first_colon;
-  printf("%s\n", port);
+  //printf("%s\n", port);
 
   first_colon--; 
   *first_colon = '\0';
 
   hostname = url;
-  printf("%s\n", hostname); 
+  //printf("%s\n", hostname); 
 
   urlinfo->hostname = hostname;
   urlinfo->port = port;
@@ -130,7 +130,7 @@ int main(int argc, char *argv[])
   send_request(sockfd, urlinfo->hostname, urlinfo->port, urlinfo->path);
   
   while ((numbytes = recv(sockfd, buf, BUFSIZE - 1, 0)) > 0) {
-    printf("%d\n", numbytes);
+    printf("%s", buf);
   }
 
   free(urlinfo); 
